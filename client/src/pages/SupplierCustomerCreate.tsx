@@ -3,15 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { 
   Users, 
   ChevronRight,
@@ -28,23 +21,21 @@ import {
   Menu,
   Key,
   FileText,
-  Edit
+  Edit,
+  Trash2,
+  Phone,
+  MapPin,
+  User,
+  Building2
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
-const ClientStaff = () => {
+const SupplierCustomerCreate = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [createProfileOpen, setCreateProfileOpen] = useState(false);
   const [clientDetailsOpen, setClientDetailsOpen] = useState(false);
   const [clientStaffOpen, setClientStaffOpen] = useState(false);
-  const [supplierCustomerOpen, setSupplierCustomerOpen] = useState(false);
+  const [supplierCustomerOpen, setSupplierCustomerOpen] = useState(true);
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
@@ -70,12 +61,12 @@ const ClientStaff = () => {
     { 
       icon: UserCheck, 
       label: "Client Details", 
-      path: "/client-details",
+      path: "/client-details", 
       hasDropdown: true,
       isOpen: clientDetailsOpen,
       subItems: [
-        { label: "Rent Details", path: "/client-details" },
-        { label: "License Details", path: "/client-details" },
+        { label: "Rent Details", path: "/client-details/rent" },
+        { label: "License Details", path: "/client-details/license" },
       ]
     },
     { 
@@ -112,26 +103,27 @@ const ClientStaff = () => {
     { icon: Activity, label: "Staff Activity", path: "/staff-activity" },
   ];
 
-  const clientStaffData = [
-    { 
-      id: 1, 
-      clientName: "Zeigets", 
-      staffName: "nephy k", 
-      dateOfJoining: "2023-12-12", 
-      phone1: "9895814599", 
-      status: "active",
-      createdDate: "2022-07-07"
-    },
-    { 
-      id: 2, 
-      clientName: "Zeigets", 
-      staffName: "nephy", 
-      dateOfJoining: "2020-02-04", 
-      phone1: "+971501234567", 
-      status: "active",
-      createdDate: "2023-12-12"
-    }
-  ];
+  const [formData, setFormData] = useState({
+    client: "",
+    name: "",
+    trnNumber: "",
+    phoneNumber: "+971501234567",
+    type: "Customer/Supplier",
+    address: ""
+  });
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Form submitted:", formData);
+    // Handle form submission logic here
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -149,31 +141,19 @@ const ClientStaff = () => {
           <h1 className="text-xl font-semibold">AdminPanel</h1>
         </div>
         <div className="flex items-center space-x-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center space-x-2 text-white hover:bg-white/20">
-                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                  <Users className="h-4 w-4" />
-                </div>
-                <span>admin</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuItem>
-                <Key className="mr-2 h-4 w-4" />
-                <span>Change Password</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="text-red-600">
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Logout</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+              <Users className="h-4 w-4" />
+            </div>
+            <span>admin</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white hover:bg-white/20"
+          >
+            <Settings className="h-4 w-4" />
+          </Button>
         </div>
       </header>
 
@@ -212,7 +192,11 @@ const ClientStaff = () => {
                         navigate(item.path);
                       }
                     }}
-                    className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-gray-300 hover:bg-white/5 hover:text-white"
+                    className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                      item.label === "Supplier Customer" 
+                        ? 'bg-white/10 text-white' 
+                        : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                    }`}
                   >
                     <item.icon className="h-4 w-4" />
                     <span className="text-sm flex-1">{item.label}</span>
@@ -232,22 +216,37 @@ const ClientStaff = () => {
                       (item.label === "Client Details" && clientDetailsOpen) ||
                       (item.label === "Client Staff" && clientStaffOpen) ||
                       (item.label === "Supplier Customer" && supplierCustomerOpen)) && (
-                        <div className="ml-6 mt-1 space-y-1">
-                          {item.subItems.map((subItem, subIndex) => (
-                            <button
-                              key={subIndex}
-                              onClick={() => navigate(subItem.path)}
-                              className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-gray-300 hover:bg-white/5 hover:text-white"
-                            >
+                      <div className="ml-6 mt-1 space-y-1">
+                        {item.subItems.map((subItem, subIndex) => (
+                          <button
+                            key={subIndex}
+                            onClick={() => {
+                              if (subItem.path) {
+                                navigate(subItem.path);
+                              } else if (subItem.onClick) {
+                                subItem.onClick();
+                              }
+                            }}
+                            className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                              subItem.label === "Create" 
+                                ? 'bg-white/10 text-white' 
+                                : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                            }`}
+                          >
+                            {item.label === "Supplier Customer" ? (
+                              <Menu className="h-4 w-4" />
+                            ) : (
                               <FileText className="h-4 w-4" />
-                              <span className="text-sm">{subItem.label}</span>
-                            </button>
-                          ))}
-                        </div>
-                      )
-                    )}
+                            )}
+                            <span className="text-sm">{subItem.label}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )
+                  )}
                 </div>
               ))}
+
               
               <button
                 onClick={handleLogout}
@@ -267,93 +266,118 @@ const ClientStaff = () => {
               <Home className="h-4 w-4" />
               <span>Home</span>
               <ChevronRight className="h-4 w-4" />
-              <span>Client Staff</span>
+              <span>Customer Supplier</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Edit className="h-5 w-5 text-blue-600" />
+              <h2 className="text-xl font-semibold text-gray-800">Customer Supplier</h2>
             </div>
           </div>
 
           <Card>
             <CardContent className="p-6">
-              <div className="flex items-center space-x-2 mb-6">
-                <Users className="h-5 w-5 text-blue-600" />
-                <h2 className="text-xl font-semibold text-gray-800">Client Staff</h2>
-              </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Select Client */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Select Client
+                    </label>
+                    <Select value={formData.client} onValueChange={(value) => handleInputChange("client", value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Client" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="zeigets">Zeigets</SelectItem>
+                        <SelectItem value="client2">Client 2</SelectItem>
+                        <SelectItem value="client3">Client 3</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Client</label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Client" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="zeigets">Zeigets</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  {/* Name */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Name
+                    </label>
+                    <Input
+                      placeholder="Enter name"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange("name", e.target.value)}
+                    />
+                  </div>
+
+                  {/* TRN Number */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      TRN Number
+                    </label>
+                    <Input
+                      placeholder="Enter TRN number"
+                      value={formData.trnNumber}
+                      onChange={(e) => handleInputChange("trnNumber", e.target.value)}
+                    />
+                  </div>
+
+                  {/* Phone Number */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Phone Number
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span className="text-sm text-gray-500">🇦🇪 +971</span>
+                      </div>
+                      <Input
+                        className="pl-20"
+                        placeholder="50 123 4567"
+                        value={formData.phoneNumber}
+                        onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Type */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Type
+                    </label>
+                    <Select value={formData.type} onValueChange={(value) => handleInputChange("type", value)}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Customer/Supplier">Customer/Supplier</SelectItem>
+                        <SelectItem value="Customer">Customer</SelectItem>
+                        <SelectItem value="Supplier">Supplier</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
+
+                {/* Address */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Staff Name</label>
-                  <Input placeholder="Enter staff name" />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Address
+                  </label>
+                  <Textarea
+                    placeholder="Enter address"
+                    value={formData.address}
+                    onChange={(e) => handleInputChange("address", e.target.value)}
+                    className="min-h-[100px]"
+                  />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Destination</label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Destination" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="manager">Manager</SelectItem>
-                      <SelectItem value="accountant">Accountant</SelectItem>
-                      <SelectItem value="assistant">Assistant</SelectItem>
-                    </SelectContent>
-                  </Select>
+
+                {/* Submit Button */}
+                <div className="flex justify-end">
+                  <Button 
+                    type="submit" 
+                    className="bg-green-600 hover:bg-green-700 text-white px-8 py-2"
+                  >
+                    Create
+                  </Button>
                 </div>
-              </div>
-
-              <div className="flex space-x-4 mb-6">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                  Search
-                </Button>
-                <Button variant="outline">
-                  Reset
-                </Button>
-              </div>
-
-              <div className="mb-4">
-                <p className="text-sm text-gray-600">Showing 1-2 of 2 items.</p>
-              </div>
-
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>#</TableHead>
-                    <TableHead>Client Name</TableHead>
-                    <TableHead className="text-blue-600">Staff Name</TableHead>
-                    <TableHead className="text-blue-600">Date Of Joining</TableHead>
-                    <TableHead className="text-blue-600">Phone1</TableHead>
-                    <TableHead className="text-blue-600">Status</TableHead>
-                    <TableHead className="text-blue-600">Created Date</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {clientStaffData.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell>{item.id}</TableCell>
-                      <TableCell>{item.clientName}</TableCell>
-                      <TableCell className="text-blue-600">{item.staffName}</TableCell>
-                      <TableCell className="text-blue-600">{item.dateOfJoining}</TableCell>
-                      <TableCell className="text-blue-600">{item.phone1}</TableCell>
-                      <TableCell className="text-blue-600">{item.status}</TableCell>
-                      <TableCell className="text-blue-600">{item.createdDate}</TableCell>
-                      <TableCell>
-                        <Button size="sm" variant="ghost" className="text-blue-600 hover:text-blue-700">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              </form>
             </CardContent>
           </Card>
 
@@ -368,4 +392,4 @@ const ClientStaff = () => {
   );
 };
 
-export default ClientStaff;
+export default SupplierCustomerCreate; 

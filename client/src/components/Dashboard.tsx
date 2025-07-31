@@ -50,7 +50,10 @@ const Dashboard = () => {
   };
 
   const [createProfileOpen, setCreateProfileOpen] = useState(false);
+  const [clientDetailsOpen, setClientDetailsOpen] = useState(false);
   const [clientStaffOpen, setClientStaffOpen] = useState(false);
+  const [supplierCustomerOpen, setSupplierCustomerOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("license");
 
   const sidebarItems = [
     { icon: Home, label: "Dashboard", path: "/dashboard", active: true },
@@ -59,6 +62,7 @@ const Dashboard = () => {
       label: "Create Profile", 
       path: "/create-profile",
       hasDropdown: true,
+      isOpen: createProfileOpen,
       subItems: [
         { label: "Client", path: "/create-profile" },
         { label: "Client Staff", path: "/client-staff-profile" },
@@ -66,19 +70,40 @@ const Dashboard = () => {
         { label: "View Users", path: "/view-users" },
       ]
     },
-    { icon: UserCheck, label: "Client Details", path: "/client-details" },
+    {
+      icon: UserCheck,
+      label: "Client Details",
+      path: "/client-details",
+      hasDropdown: true,
+      isOpen: clientDetailsOpen,
+      subItems: [
+        { label: "Rent Details", onClick: () => setActiveTab("rent") },
+        { label: "License Details", onClick: () => setActiveTab("license"), active: true },
+      ]
+    },
     { 
       icon: Users, 
       label: "Client Staff", 
       path: "/client-staff",
       hasDropdown: true,
+      isOpen: clientStaffOpen,
       subItems: [
         { icon: Contact, label: "Staff Details", path: "/staff-details" },
         { icon: CreditCard, label: "Staff Salary", path: "/staff-salary" },
         { icon: FolderOpen, label: "Staff Documents", path: "/staff-documents" },
       ]
     },
-    { icon: Receipt, label: "Supplier Customer", path: "/supplier-customer" },
+    {
+      icon: Receipt,
+      label: "Supplier Customer",
+      path: "/supplier-customer",
+      hasDropdown: true,
+      isOpen: supplierCustomerOpen,
+      subItems: [
+        { label: "Create", path: "/supplier-customer/create" },
+        { label: "View", path: "/supplier-customer/view" },
+      ]
+    },
     { icon: FileText, label: "Invoice", path: "/invoice" },
     { icon: CheckSquare, label: "Check Invoice", path: "/check-invoice" },
     { icon: Calendar, label: "Vat Return Date", path: "/vat-return-date" },
@@ -158,8 +183,12 @@ const Dashboard = () => {
                       if (item.hasDropdown) {
                         if (item.label === "Create Profile") {
                           setCreateProfileOpen(!createProfileOpen);
+                        } else if (item.label === "Client Details") {
+                          setClientDetailsOpen(!clientDetailsOpen);
                         } else if (item.label === "Client Staff") {
                           setClientStaffOpen(!clientStaffOpen);
+                        } else if (item.label === "Supplier Customer") {
+                          setSupplierCustomerOpen(!supplierCustomerOpen);
                         }
                       } else {
                         navigate(item.path);
@@ -174,9 +203,11 @@ const Dashboard = () => {
                     <item.icon className="h-4 w-4" />
                     <span className="text-sm flex-1">{item.label}</span>
                     {item.hasDropdown && (
-                      <ChevronRight className={`h-4 w-4 transition-transform ${
+                      <ChevronRight className={`h-4 w-4 transition-transform duration-200 text-gray-300 ${
                         (item.label === "Create Profile" && createProfileOpen) || 
-                        (item.label === "Client Staff" && clientStaffOpen) 
+                        (item.label === "Client Details" && clientDetailsOpen) ||
+                        (item.label === "Client Staff" && clientStaffOpen) ||
+                        (item.label === "Supplier Customer" && supplierCustomerOpen)
                           ? 'rotate-90' : ''
                       }`} />
                     )}
@@ -184,15 +215,27 @@ const Dashboard = () => {
                   
                   {item.hasDropdown && item.subItems && (
                     ((item.label === "Create Profile" && createProfileOpen) || 
-                     (item.label === "Client Staff" && clientStaffOpen)) && (
+                     (item.label === "Client Details" && clientDetailsOpen) ||
+                     (item.label === "Client Staff" && clientStaffOpen) ||
+                     (item.label === "Supplier Customer" && supplierCustomerOpen)) && (
                     <div className="ml-6 mt-1 space-y-1">
                       {item.subItems.map((subItem, subIndex) => (
                         <button
                           key={subIndex}
-                          onClick={() => navigate(subItem.path)}
+                          onClick={() => {
+                            if (subItem.path) {
+                              navigate(subItem.path);
+                            } else if (subItem.onClick) {
+                              subItem.onClick();
+                            }
+                          }}
                           className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-gray-300 hover:bg-white/5 hover:text-white"
                         >
-                          {subItem.icon ? <subItem.icon className="h-4 w-4" /> : <FileText className="h-4 w-4" />}
+                          {item.label === "Supplier Customer" ? (
+                            <Menu className="h-4 w-4" />
+                          ) : (
+                            <FileText className="h-4 w-4" />
+                          )}
                           <span className="text-sm">{subItem.label}</span>
                         </button>
                       ))}

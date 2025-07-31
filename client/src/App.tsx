@@ -17,6 +17,8 @@ import ViewUsers from "./pages/ViewUsers";
 import StaffDetails from "./pages/StaffDetails";
 import StaffSalary from "./pages/StaffSalary";
 import StaffDocument from "./pages/StaffDocument";
+import SupplierCustomerCreate from "./components/SupplierCustomerCreate"; 
+import SupplierCustomerView from "./components/SupplierCustomerView";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -107,6 +109,22 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <StaffDocument />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/supplier-customer/create" 
+            element={
+              <ProtectedRoute>
+                <SupplierCustomerCreate />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/supplier-customer/view" 
+            element={
+              <ProtectedRoute>
+                <SupplierCustomerView />
               </ProtectedRoute>
             } 
           />
