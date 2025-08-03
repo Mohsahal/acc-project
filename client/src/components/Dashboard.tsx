@@ -8,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Layout from "./Layout";
 import { 
   Users, 
   DollarSign, 
@@ -16,6 +15,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { apiService } from "@/services/api";
+import DashboardLayout from "./DashboardLayout";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -64,16 +64,16 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <Layout title="Dashboard">
+      <DashboardLayout title="Dashboard">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
         </div>
-      </Layout>
+      </DashboardLayout>
     );
   }
 
   return (
-    <Layout title="Dashboard">
+    <DashboardLayout title="Dashboard">
       <div className="mb-6">
         <h2 className="text-2xl font-semibold text-gray-800">
           Dashboard <span className="text-gray-500 font-normal">Control panel</span>
@@ -207,7 +207,7 @@ const Dashboard = () => {
           </Table>
         </CardContent>
       </Card>
-    </Layout>
+    </DashboardLayout>
   );
 };
 

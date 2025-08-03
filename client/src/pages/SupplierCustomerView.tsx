@@ -1,23 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { 
   Users, 
   ChevronRight,
-  Settings,
-  LogOut,
   Home,
-  UserPlus,
-  UserCheck,
-  Receipt,
-  CheckSquare,
-  Calendar,
-  BarChart3,
-  Activity,
-  Menu,
-  Key,
   FileText,
   Edit,
   Trash2,
@@ -29,417 +18,219 @@ import {
   RotateCcw,
   Eye,
   UserCheck as UserCheckIcon,
-  X
+  X,
+  Plus
 } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import DashboardLayout from "@/components/DashboardLayout";
 
 const SupplierCustomerView = () => {
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [createProfileOpen, setCreateProfileOpen] = useState(false);
-  const [clientDetailsOpen, setClientDetailsOpen] = useState(false);
-  const [clientStaffOpen, setClientStaffOpen] = useState(false);
-  const [supplierCustomerOpen, setSupplierCustomerOpen] = useState(true);
-  const [invoiceOpen, setInvoiceOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("username");
-    navigate("/");
-  };
-
-  const sidebarItems = [
-    { icon: Home, label: "Dashboard", path: "/dashboard" },
-    { 
-      icon: UserPlus, 
-      label: "Create Profile", 
-      path: "/create-profile",
-      hasDropdown: true,
-      isOpen: createProfileOpen,
-      subItems: [
-        { label: "Client", path: "/create-profile" },
-        { label: "Client Staff", path: "/client-staff-profile" },
-        { label: "Zigma Staff", path: "/zigma-staff-profile" },
-        { label: "View Users", path: "/view-users" },
-      ]
-    },
-    { 
-      icon: UserCheck, 
-      label: "Client Details", 
-      path: "/client-details", 
-      hasDropdown: true,
-      isOpen: clientDetailsOpen,
-      subItems: [
-        { label: "Rent Details", path: "/client-details/rent" },
-        { label: "License Details", path: "/client-details/license" },
-      ]
-    },
-    { 
-      icon: Users, 
-      label: "Client Staff", 
-      path: "/client-staff",
-      hasDropdown: true,
-      isOpen: clientStaffOpen,
-      subItems: [
-        { label: "Staff Details", path: "/staff-details" },
-        { label: "Staff Salary", path: "/staff-salary" },
-        { label: "Staff Document", path: "/staff-document" },
-      ]
-    },
-    {
-      icon: Receipt,
-      label: "Supplier Customer",
-      path: "/supplier-customer",
-      hasDropdown: true,
-      isOpen: supplierCustomerOpen,
-      subItems: [
-        { label: "Create", path: "/supplier-customer/create" },
-        { label: "View", path: "/supplier-customer/view", active: true },
-      ]
-    },
-    { 
-      icon: FileText, 
-      label: "Invoice", 
-      path: "/invoice",
-      hasDropdown: true,
-      isOpen: invoiceOpen,
-      subItems: [
-        { label: "Create Single Invoice", path: "/invoice/create-single" },
-        { label: "Create Multiple Invoice", path: "/invoice/create-multiple" },
-        { label: "New Multiple Invoice", path: "/invoice/new-multiple" },
-        { label: "Pending Invoice", path: "/invoice/pending" },
-        { label: "View", path: "/invoice/view" },
-        { label: "Invoice Status", path: "/invoice/status" },
-        { label: "Invoice Month Wise", path: "/invoice/month-wise" },
-      ]
-    },
-    { icon: CheckSquare, label: "Check Invoice", path: "/check-invoice" },
-    { icon: Calendar, label: "Vat Return Date", path: "/vat-return-date" },
-    { icon: BarChart3, label: "Vat Return", path: "/vat-return" },
-    { icon: Calendar, label: "Vat Return This Month", path: "/vat-return-month" },
-    { icon: FileText, label: "Vat Return This Month All", path: "/vat-return-month-all" },
-    { icon: Settings, label: "Designation", path: "/designation" },
-    { icon: BarChart3, label: "Reports", path: "/reports" },
-    { icon: Activity, label: "Staff Activity", path: "/staff-activity" },
-  ];
-
-  const customerData = [
+  const supplierCustomerData = [
     {
       id: 1,
-      companyName: "AL THANAA TRADING LLC",
-      location: "DEIRA, DUBAI",
-      clientName: "CLICK COMPUTER LLC",
-      phone: "+971581570075",
-      trnNumber: "100330999200003",
-      type: "supplier",
-      totalInvoice: 0,
-      invoiceCompleted: 0,
-      invoicePending: 0,
-      profilePicture: "/api/placeholder/150/150"
+      name: "Tech Solutions Ltd",
+      email: "info@techsolutions.com",
+      phone: "+971 50 123 4567",
+      type: "Supplier",
+      status: "Active",
+      company: "Tech Solutions Ltd",
+      contactPerson: "John Smith",
+      address: "Dubai, UAE"
     },
     {
       id: 2,
-      companyName: "ADMIRALS TRDG",
-      location: "DEIRA, DUBAI",
-      clientName: "KHALIL MOHD IBRAHIM CAFETERIA",
-      phone: "+97143389336",
-      trnNumber: "100207738400003",
-      type: "supplier",
-      totalInvoice: 1,
-      invoiceCompleted: 1,
-      invoicePending: 0,
-      profilePicture: "/api/placeholder/150/150"
-    },
-    {
-      id: 3,
-      companyName: "JUCCI LAHN ELECT TRDG LLC",
-      location: "DEIRA, DUBAI",
-      clientName: "JUCCI LAHN ELECT TRDG LLC",
-      phone: "+971501234567",
-      trnNumber: "100516998160003",
-      type: "supplier",
-      totalInvoice: 1,
-      invoiceCompleted: 1,
-      invoicePending: 0,
-      profilePicture: "/api/placeholder/150/150"
+      name: "Digital Systems",
+      email: "contact@digitalsystems.com",
+      phone: "+971 55 987 6543",
+      type: "Customer",
+      status: "Active",
+      company: "Digital Systems",
+      contactPerson: "Jane Doe",
+      address: "Abu Dhabi, UAE"
     }
   ];
 
   const handleSearch = () => {
     console.log("Searching for:", searchQuery);
-    // Implement search functionality
   };
 
   const handleReset = () => {
     setSearchQuery("");
   };
 
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedItems(supplierCustomerData.map(item => item.id.toString()));
+    } else {
+      setSelectedItems([]);
+    }
+  };
+
+  const handleItemSelect = (itemId: string) => {
+    setSelectedItems(prev => 
+      prev.includes(itemId) 
+        ? prev.filter(id => id !== itemId)
+        : [...prev, itemId]
+    );
+  };
+
+  const handleMultipleDelete = () => {
+    console.log("Deleting items:", selectedItems);
+  };
+
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-blue-600 text-white px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="text-white hover:bg-white/20"
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
-          <div className="flex items-center space-x-2">
-            <Edit className="h-5 w-5" />
-            <h1 className="text-xl font-semibold">Customer Supplier</h1>
-          </div>
+    <DashboardLayout title="AdminPanel">
+      <div className="mb-6">
+        <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
+          <Home className="h-4 w-4" />
+          <span>Home</span>
+          <ChevronRight className="h-4 w-4" />
+          <span>Supplier Customer View</span>
         </div>
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <span className="text-sm">admin</span>
-            <Settings className="h-4 w-4" />
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-white hover:bg-white/20"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-      </header>
+      </div>
 
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className={`bg-dashboard-sidebar text-dashboard-sidebar-foreground transition-all duration-300 ${
-          sidebarOpen ? 'w-64' : 'w-0 overflow-hidden'
-        }`}>
-          <div className="p-4">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                <Users className="h-5 w-5" />
-              </div>
-              <div>
-                <div className="font-semibold">Admin</div>
-                <div className="text-sm text-green-400">● Online</div>
-              </div>
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-2">
+              <Building2 className="h-5 w-5 text-blue-600" />
+              <h2 className="text-xl font-semibold text-gray-800">Supplier/Customer List</h2>
             </div>
-            
-            <nav className="space-y-1">
-              {sidebarItems.map((item, index) => (
-                <div key={index}>
-                  <button
-                    onClick={() => {
-                      if (item.hasDropdown) {
-                        if (item.label === "Create Profile") {
-                          setCreateProfileOpen(!createProfileOpen);
-                        } else if (item.label === "Client Details") {
-                          setClientDetailsOpen(!clientDetailsOpen);
-                        } else if (item.label === "Client Staff") {
-                          setClientStaffOpen(!clientStaffOpen);
-                        } else if (item.label === "Supplier Customer") {
-                          setSupplierCustomerOpen(!supplierCustomerOpen);
-                        } else if (item.label === "Invoice") {
-                          setInvoiceOpen(!invoiceOpen);
-                        }
-                      } else {
-                        navigate(item.path);
-                      }
-                    }}
-                    className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
-                      item.label === "Supplier Customer" 
-                        ? 'bg-white/10 text-white' 
-                        : 'text-gray-300 hover:bg-white/5 hover:text-white'
-                    }`}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    <span className="text-sm flex-1">{item.label}</span>
-                    {item.hasDropdown && (
-                      <ChevronRight className={`h-4 w-4 transition-transform duration-200 text-gray-300 ${
-                        (item.label === "Create Profile" && createProfileOpen) || 
-                        (item.label === "Client Details" && clientDetailsOpen) ||
-                        (item.label === "Client Staff" && clientStaffOpen) ||
-                        (item.label === "Supplier Customer" && supplierCustomerOpen) ||
-                        (item.label === "Invoice" && invoiceOpen)
-                          ? 'rotate-90' : ''
-                      }`} />
-                    )}
-                  </button>
-                  
-                  {item.hasDropdown && item.subItems && (
-                    ((item.label === "Create Profile" && createProfileOpen) || 
-                      (item.label === "Client Details" && clientDetailsOpen) ||
-                      (item.label === "Client Staff" && clientStaffOpen) ||
-                      (item.label === "Supplier Customer" && supplierCustomerOpen) ||
-                      (item.label === "Invoice" && invoiceOpen)) && (
-                      <div className="ml-6 mt-1 space-y-1">
-                        {item.subItems.map((subItem, subIndex) => (
-                          <button
-                            key={subIndex}
-                            onClick={() => {
-                              if (subItem.path) {
-                                navigate(subItem.path);
-                              }
-                            }}
-                            className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
-                              subItem.active 
-                                ? 'bg-blue-500/20 text-blue-300' 
-                                : 'text-gray-300 hover:bg-white/5 hover:text-white'
-                            }`}
-                          >
-                            <FileText className="h-4 w-4" />
-                            <span className="text-sm">{subItem.label}</span>
-                          </button>
-                        ))}
-                      </div>
-                    )
-                  )}
-                </div>
-              ))}
-
-              
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors text-gray-300 hover:bg-white/5 hover:text-white mt-4"
-              >
-                <LogOut className="h-4 w-4" />
-                <span className="text-sm">Logout</span>
-              </button>
-            </nav>
-          </div>
-        </aside>
-
-        {/* Main Content */}
-        <main className="flex-1 p-6 bg-white">
-          <div className="mb-6">
-            <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
-              <Home className="h-4 w-4" />
-              <span>Dashboard</span>
-              <ChevronRight className="h-4 w-4" />
-              <span>Customer Supplier</span>
-            </div>
+            <Button className="bg-success hover:bg-success/90 text-white">
+              <Plus className="h-4 w-4 mr-2" />
+              Add New
+            </Button>
           </div>
 
           {/* Search Section */}
-          <Card className="mb-6">
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-4">
-                <div className="flex-1">
-                  <Input
-                    placeholder="Search Here"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="max-w-md"
-                  />
-                </div>
-                <Button onClick={handleSearch} className="bg-blue-600 hover:bg-blue-700 text-white">
-                  <Search className="h-4 w-4 mr-2" />
-                  Search
-                </Button>
-                <Button onClick={handleReset} variant="outline" className="border-purple-500 text-purple-600 hover:bg-purple-50">
-                  <RotateCcw className="h-4 w-4 mr-2" />
-                  Reset
-                </Button>
-              </div>
-              <div className="mt-4">
-                <p className="text-sm text-gray-600">Showing 1-20 of 30,532 items.</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Customer/Supplier Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {customerData.map((customer) => (
-              <Card key={customer.id} className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  {/* Profile Picture Placeholder */}
-                  <div className="flex justify-center mb-4">
-                    <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center">
-                      <User className="h-10 w-10 text-gray-400" />
-                    </div>
-                  </div>
-
-                  {/* Company Info */}
-                  <div className="text-center mb-4">
-                    <h3 className="font-semibold text-lg text-gray-800 mb-1">
-                      {customer.companyName}
-                    </h3>
-                    <p className="text-sm text-gray-600 flex items-center justify-center">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      {customer.location}
-                    </p>
-                  </div>
-
-                  {/* Details */}
-                  <div className="space-y-2 mb-4">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Client Name:</span>
-                      <a href="#" className="text-blue-600 hover:underline">
-                        {customer.clientName}
-                      </a>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Phone:</span>
-                      <a href={`tel:${customer.phone}`} className="text-blue-600 hover:underline">
-                        {customer.phone}
-                      </a>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">TRN Number:</span>
-                      <a href="#" className="text-blue-600 hover:underline">
-                        {customer.trnNumber}
-                      </a>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Type:</span>
-                      <span className="text-gray-800 capitalize">{customer.type}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Total Invoice:</span>
-                      <span className="text-gray-800">{customer.totalInvoice}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Invoice Completed:</span>
-                      <span className="text-gray-800">{customer.invoiceCompleted}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Invoice Pending:</span>
-                      <span className="text-gray-800">{customer.invoicePending}</span>
-                    </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex space-x-2">
-                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white flex-1">
-                      <Edit className="h-4 w-4 mr-1" />
-                      Update
-                    </Button>
-                    <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white flex-1">
-                      <Eye className="h-4 w-4 mr-1" />
-                      View Client
-                    </Button>
-                    <Button size="sm" variant="destructive" className="flex-1">
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Delete
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+              <Input
+                placeholder="Search by name, email, or company"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
+              <select className="w-full h-10 border border-gray-300 rounded-md px-3 focus:border-blue-500 focus:ring-blue-500">
+                <option value="">All Types</option>
+                <option value="supplier">Supplier</option>
+                <option value="customer">Customer</option>
+                <option value="both">Both</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+              <select className="w-full h-10 border border-gray-300 rounded-md px-3 focus:border-blue-500 focus:ring-blue-500">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="pending">Pending</option>
+              </select>
+            </div>
           </div>
-        </main>
-      </div>
+
+          <div className="flex space-x-4 mb-6">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={handleSearch}>
+              <Search className="h-4 w-4 mr-2" />
+              Search
+            </Button>
+            <Button variant="outline" onClick={handleReset}>
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Reset
+            </Button>
+            {selectedItems.length > 0 && (
+              <Button 
+                variant="destructive" 
+                onClick={handleMultipleDelete}
+              >
+                Delete Selected ({selectedItems.length})
+              </Button>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <p className="text-sm text-gray-600">Showing 1-2 of 2 items.</p>
+          </div>
+
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>
+                  <input
+                    type="checkbox"
+                    onChange={(e) => handleSelectAll(e.target.checked)}
+                    checked={selectedItems.length === supplierCustomerData.length}
+                  />
+                </TableHead>
+                <TableHead>#</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead className="text-blue-600">Email</TableHead>
+                <TableHead className="text-blue-600">Phone</TableHead>
+                <TableHead className="text-blue-600">Type</TableHead>
+                <TableHead className="text-blue-600">Status</TableHead>
+                <TableHead className="text-blue-600">Company</TableHead>
+                <TableHead className="text-blue-600">Contact Person</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {supplierCustomerData.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>
+                    <input
+                      type="checkbox"
+                      checked={selectedItems.includes(item.id.toString())}
+                      onChange={() => handleItemSelect(item.id.toString())}
+                    />
+                  </TableCell>
+                  <TableCell>{item.id}</TableCell>
+                  <TableCell>{item.name}</TableCell>
+                  <TableCell className="text-blue-600">{item.email}</TableCell>
+                  <TableCell className="text-blue-600">{item.phone}</TableCell>
+                  <TableCell className="text-blue-600">{item.type}</TableCell>
+                  <TableCell className="text-blue-600">{item.status}</TableCell>
+                  <TableCell className="text-blue-600">{item.company}</TableCell>
+                  <TableCell className="text-blue-600">{item.contactPerson}</TableCell>
+                  <TableCell>
+                    <div className="flex space-x-2">
+                      <Button size="sm" variant="ghost" className="text-blue-600 hover:text-blue-700">
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button size="sm" variant="ghost" className="text-blue-600 hover:text-blue-700">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
       {/* Footer */}
-      <footer className="bg-blue-800 text-white px-6 py-3">
-        <div className="flex justify-between items-center">
-          <div className="text-sm">
-            Copyright © 2013-2025 Zeigets. All rights reserved. v2.170322
-          </div>
-          <div className="text-sm">
-            Version 2.2
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div className="mt-8 text-center text-sm text-gray-500">
+        Copyright © 2013-2025 <span className="text-blue-600">Zeigets.</span> All rights reserved. v2.170322
+        <span className="float-right">Version 2.2</span>
+      </div>
+    </DashboardLayout>
   );
 };
 
