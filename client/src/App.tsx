@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./components/Login";
@@ -27,23 +28,38 @@ import ViewInvoice from "./pages/ViewInvoice";
 import InvoiceStatus from "./pages/InvoiceStatus";
 import InvoiceMonthWise from "./pages/InvoiceMonthWise";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
+import Unauthorized from "./pages/Unauthorized";
+import UserDashboard from "./pages/UserDashboard";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/register" element={<Signup />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
           <Route 
             path="/dashboard"
             element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <Dashboard />
+              </AdminRoute>
+            } 
+          />
+          <Route 
+            path="/user-dashboard"
+            element={
+              <ProtectedRoute>
+                <UserDashboard />
               </ProtectedRoute>
             } 
           />
@@ -197,6 +213,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

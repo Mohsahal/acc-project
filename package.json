@@ -1,0 +1,27 @@
+{
+  "name": "acc-project",
+  "version": "2.2.0",
+  "description": "Accounting Management System - Full Stack Application",
+  "scripts": {
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "accounting",
+    "management",
+    "react",
+    "nodejs",
+    "mongodb",
+    "typescript"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+} 
