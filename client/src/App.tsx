@@ -17,7 +17,7 @@ import ViewUsers from "./pages/ViewUsers";
 import StaffDetails from "./pages/StaffDetails";
 import StaffSalary from "./pages/StaffSalary";
 import StaffDocument from "./pages/StaffDocument";
-import SupplierCustomerCreate from "./components/SupplierCustomerCreate"; 
+import SupplierCustomerCreate from "./pages/SupplierCustomerCreate"; 
 import SupplierCustomerView from "./pages/SupplierCustomerView";
 import CreateSingleInvoice from "./pages/CreateSingleInvoice";
 import CreateMultipleInvoice from "./pages/CreateMultipleInvoice";

@@ -28,7 +28,8 @@ import {
   Search,
   RotateCcw,
   Eye,
-  UserCheck as UserCheckIcon
+  UserCheck as UserCheckIcon,
+  X
 } from "lucide-react";
 
 const SupplierCustomerView = () => {
@@ -37,7 +38,7 @@ const SupplierCustomerView = () => {
   const [createProfileOpen, setCreateProfileOpen] = useState(false);
   const [clientDetailsOpen, setClientDetailsOpen] = useState(false);
   const [clientStaffOpen, setClientStaffOpen] = useState(false);
-  const [supplierCustomerOpen, setSupplierCustomerOpen] = useState(false);
+  const [supplierCustomerOpen, setSupplierCustomerOpen] = useState(true);
   const [invoiceOpen, setInvoiceOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -93,7 +94,7 @@ const SupplierCustomerView = () => {
       isOpen: supplierCustomerOpen,
       subItems: [
         { label: "Create", path: "/supplier-customer/create" },
-        { label: "View", path: "/supplier-customer/view" },
+        { label: "View", path: "/supplier-customer/view", active: true },
       ]
     },
     { 
@@ -174,9 +175,9 @@ const SupplierCustomerView = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-dashboard-header text-white px-6 py-4 flex items-center justify-between">
+      <header className="bg-blue-600 text-white px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Button
             variant="ghost"
@@ -186,21 +187,22 @@ const SupplierCustomerView = () => {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <h1 className="text-xl font-semibold">AdminPanel</h1>
+          <div className="flex items-center space-x-2">
+            <Edit className="h-5 w-5" />
+            <h1 className="text-xl font-semibold">Customer Supplier</h1>
+          </div>
         </div>
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-              <Users className="h-4 w-4" />
-            </div>
-            <span>admin</span>
+            <span className="text-sm">admin</span>
+            <Settings className="h-4 w-4" />
           </div>
           <Button
             variant="ghost"
             size="icon"
             className="text-white hover:bg-white/20"
           >
-            <Settings className="h-4 w-4" />
+            <X className="h-4 w-4" />
           </Button>
         </div>
       </header>
@@ -275,21 +277,15 @@ const SupplierCustomerView = () => {
                             onClick={() => {
                               if (subItem.path) {
                                 navigate(subItem.path);
-                              } else if (subItem.onClick) {
-                                subItem.onClick();
                               }
                             }}
                             className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
-                              subItem.label === "View" 
-                                ? 'bg-white/10 text-white' 
+                              subItem.active 
+                                ? 'bg-blue-500/20 text-blue-300' 
                                 : 'text-gray-300 hover:bg-white/5 hover:text-white'
                             }`}
                           >
-                            {item.label === "Supplier Customer" ? (
-                              <Menu className="h-4 w-4" />
-                            ) : (
-                              <FileText className="h-4 w-4" />
-                            )}
+                            <FileText className="h-4 w-4" />
                             <span className="text-sm">{subItem.label}</span>
                           </button>
                         ))}
@@ -312,17 +308,13 @@ const SupplierCustomerView = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 bg-white">
           <div className="mb-6">
             <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
               <Home className="h-4 w-4" />
-              <span>Home</span>
+              <span>Dashboard</span>
               <ChevronRight className="h-4 w-4" />
               <span>Customer Supplier</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Edit className="h-5 w-5 text-blue-600" />
-              <h2 className="text-xl font-semibold text-gray-800">Customer Supplier</h2>
             </div>
           </div>
 
@@ -433,14 +425,20 @@ const SupplierCustomerView = () => {
               </Card>
             ))}
           </div>
-
-          {/* Footer */}
-          <div className="mt-8 text-center text-sm text-gray-500">
-            Copyright © 2013-2025 <span className="text-blue-600">Zeigets.</span> All rights reserved. v2.170322
-            <span className="float-right">Version 2.2</span>
-          </div>
         </main>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-blue-800 text-white px-6 py-3">
+        <div className="flex justify-between items-center">
+          <div className="text-sm">
+            Copyright © 2013-2025 Zeigets. All rights reserved. v2.170322
+          </div>
+          <div className="text-sm">
+            Version 2.2
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
