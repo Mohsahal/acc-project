@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { 
   Users, 
   ChevronRight,
@@ -19,29 +19,36 @@ import {
   BarChart3,
   Activity,
   Menu,
-  Key,
   FileText,
-  Edit,
-  Trash2,
-  Phone,
-  MapPin,
-  User,
-  Building2
+  X,
+  Edit3
 } from "lucide-react";
 
-const SupplierCustomerCreate = () => {
+const PendingInvoice = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [createProfileOpen, setCreateProfileOpen] = useState(false);
   const [clientDetailsOpen, setClientDetailsOpen] = useState(false);
   const [clientStaffOpen, setClientStaffOpen] = useState(false);
   const [supplierCustomerOpen, setSupplierCustomerOpen] = useState(false);
-  const [invoiceOpen, setInvoiceOpen] = useState(false);
+  const [invoiceOpen, setInvoiceOpen] = useState(true);
+
+  const [formData, setFormData] = useState({
+    client: ""
+  });
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("username");
     navigate("/");
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = () => {
+    console.log("Submitting pending invoice request...", formData);
   };
 
   const sidebarItems = [
@@ -62,12 +69,12 @@ const SupplierCustomerCreate = () => {
     { 
       icon: UserCheck, 
       label: "Client Details", 
-      path: "/client-details", 
+      path: "/client-details",
       hasDropdown: true,
       isOpen: clientDetailsOpen,
       subItems: [
-        { label: "Rent Details", path: "/client-details/rent" },
-        { label: "License Details", path: "/client-details/license" },
+        { label: "Rent Details", path: "/client-details" },
+        { label: "License Details", path: "/client-details" },
       ]
     },
     { 
@@ -103,7 +110,7 @@ const SupplierCustomerCreate = () => {
         { label: "Create Single Invoice", path: "/invoice/create-single" },
         { label: "Create Multiple Invoice", path: "/invoice/create-multiple" },
         { label: "New Multiple Invoice", path: "/invoice/new-multiple" },
-        { label: "Pending Invoice", path: "/invoice/pending" },
+        { label: "Pending Invoice", path: "/invoice/pending", active: true },
         { label: "View", path: "/invoice/view" },
         { label: "Invoice Status", path: "/invoice/status" },
         { label: "Invoice Month Wise", path: "/invoice/month-wise" },
@@ -119,32 +126,10 @@ const SupplierCustomerCreate = () => {
     { icon: Activity, label: "Staff Activity", path: "/staff-activity" },
   ];
 
-  const [formData, setFormData] = useState({
-    client: "",
-    name: "",
-    trnNumber: "",
-    phoneNumber: "+971501234567",
-    type: "Customer/Supplier",
-    address: ""
-  });
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Handle form submission logic here
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-dashboard-header text-white px-6 py-4 flex items-center justify-between">
+      <header className="bg-blue-600 text-white px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Button
             variant="ghost"
@@ -154,21 +139,18 @@ const SupplierCustomerCreate = () => {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <h1 className="text-xl font-semibold">AdminPanel</h1>
+          <div className="flex items-center space-x-2">
+            <Edit3 className="h-5 w-5" />
+            <h1 className="text-xl font-semibold">Invoice</h1>
+          </div>
         </div>
         <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-              <Users className="h-4 w-4" />
-            </div>
-            <span>admin</span>
-          </div>
           <Button
             variant="ghost"
             size="icon"
             className="text-white hover:bg-white/20"
           >
-            <Settings className="h-4 w-4" />
+            <X className="h-4 w-4" />
           </Button>
         </div>
       </header>
@@ -211,7 +193,7 @@ const SupplierCustomerCreate = () => {
                       }
                     }}
                     className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
-                      item.label === "Supplier Customer" 
+                      item.label === "Invoice" 
                         ? 'bg-white/10 text-white' 
                         : 'text-gray-300 hover:bg-white/5 hover:text-white'
                     }`}
@@ -232,30 +214,22 @@ const SupplierCustomerCreate = () => {
                   
                   {item.hasDropdown && item.subItems && (
                     ((item.label === "Create Profile" && createProfileOpen) || 
-                      (item.label === "Client Details" && clientDetailsOpen) ||
-                      (item.label === "Client Staff" && clientStaffOpen) ||
-                      (item.label === "Supplier Customer" && supplierCustomerOpen) ||
-                      (item.label === "Invoice" && invoiceOpen)) && (
+                     (item.label === "Client Details" && clientDetailsOpen) ||
+                     (item.label === "Client Staff" && clientStaffOpen) ||
+                     (item.label === "Supplier Customer" && supplierCustomerOpen) ||
+                     (item.label === "Invoice" && invoiceOpen)) && (
                       <div className="ml-6 mt-1 space-y-1">
                         {item.subItems.map((subItem, subIndex) => (
                           <button
                             key={subIndex}
-                            onClick={() => {
-                              if (subItem.path) {
-                                navigate(subItem.path);
-                              }
-                            }}
+                            onClick={() => navigate(subItem.path)}
                             className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
-                              subItem.label === "Create" 
-                                ? 'bg-white/10 text-white' 
+                              subItem.active 
+                                ? 'bg-blue-500/20 text-blue-300' 
                                 : 'text-gray-300 hover:bg-white/5 hover:text-white'
                             }`}
                           >
-                            {item.label === "Supplier Customer" ? (
-                              <Menu className="h-4 w-4" />
-                            ) : (
-                              <FileText className="h-4 w-4" />
-                            )}
+                            <FileText className="h-4 w-4" />
                             <span className="text-sm">{subItem.label}</span>
                           </button>
                         ))}
@@ -264,7 +238,6 @@ const SupplierCustomerCreate = () => {
                   )}
                 </div>
               ))}
-
               
               <button
                 onClick={handleLogout}
@@ -278,136 +251,89 @@ const SupplierCustomerCreate = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 bg-white">
           <div className="mb-6">
             <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
               <Home className="h-4 w-4" />
-              <span>Home</span>
+              <span>Dashboard</span>
               <ChevronRight className="h-4 w-4" />
-              <span>Customer Supplier</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Edit className="h-5 w-5 text-blue-600" />
-              <h2 className="text-xl font-semibold text-gray-800">Customer Supplier</h2>
+              <span>Pending Invoice</span>
             </div>
           </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Select Client */}
+          <div className="max-w-6xl mx-auto space-y-6">
+            {/* Select Client Section */}
+            <Card className="bg-white shadow-lg border border-gray-200">
+              <CardContent className="p-6">
+                <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Select Client
-                    </label>
+                    <Label className="text-sm font-medium text-gray-700 mb-2 block">Select Client</Label>
                     <Select value={formData.client} onValueChange={(value) => handleInputChange("client", value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                         <SelectValue placeholder="Select Client" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="zeigets">Zeigets</SelectItem>
-                        <SelectItem value="client2">Client 2</SelectItem>
-                        <SelectItem value="client3">Client 3</SelectItem>
+                        <SelectItem value="CLICK COMPUTERS">CLICK COMPUTERS</SelectItem>
+                        <SelectItem value="TECH SOLUTIONS">TECH SOLUTIONS</SelectItem>
+                        <SelectItem value="DIGITAL SYSTEMS">DIGITAL SYSTEMS</SelectItem>
+                        <SelectItem value="SOFTWARE CORP">SOFTWARE CORP</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-
-                  {/* Name */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Name
-                    </label>
-                    <Input
-                      placeholder="Enter name"
-                      value={formData.name}
-                      onChange={(e) => handleInputChange("name", e.target.value)}
-                    />
-                  </div>
-
-                  {/* TRN Number */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      TRN Number
-                    </label>
-                    <Input
-                      placeholder="Enter TRN number"
-                      value={formData.trnNumber}
-                      onChange={(e) => handleInputChange("trnNumber", e.target.value)}
-                    />
-                  </div>
-
-                  {/* Phone Number */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone Number
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="text-sm text-gray-500">🇦🇪 +971</span>
-                      </div>
-                      <Input
-                        className="pl-20"
-                        placeholder="50 123 4567"
-                        value={formData.phoneNumber}
-                        onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Type */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Type
-                    </label>
-                    <Select value={formData.type} onValueChange={(value) => handleInputChange("type", value)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Customer/Supplier">Customer/Supplier</SelectItem>
-                        <SelectItem value="Customer">Customer</SelectItem>
-                        <SelectItem value="Supplier">Supplier</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  
+                  <div className="flex justify-start">
+                    <Button 
+                      onClick={handleSubmit}
+                      className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 h-10 text-sm font-medium"
+                    >
+                      Submit
+                    </Button>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
 
-                {/* Address */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Address
-                  </label>
-                  <Textarea
-                    placeholder="Enter address"
-                    value={formData.address}
-                    onChange={(e) => handleInputChange("address", e.target.value)}
-                    className="min-h-[100px]"
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <div className="flex justify-end">
-                  <Button 
-                    type="submit" 
-                    className="bg-green-600 hover:bg-green-700 text-white px-8 py-2"
-                  >
-                    Create
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-
-          {/* Footer */}
-          <div className="mt-8 text-center text-sm text-gray-500">
-            Copyright © 2013-2025 <span className="text-blue-600">Zeigets.</span> All rights reserved. v2.170322
-            <span className="float-right">Version 2.2</span>
+            {/* Pending Invoice List Section */}
+            <Card className="bg-white shadow-lg border border-gray-200">
+              <CardHeader className="border-b border-gray-200">
+                <CardTitle className="text-lg font-semibold text-gray-800">
+                  Pending Invoice List
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="font-medium text-gray-700">#</TableHead>
+                      <TableHead className="font-medium text-gray-700">Client Name</TableHead>
+                      <TableHead className="font-medium text-gray-700">Pending Invoice</TableHead>
+                      <TableHead className="font-medium text-gray-700">Completed Invoice</TableHead>
+                      <TableHead className="font-medium text-gray-700">Total Invoice</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {/* Empty table body - no pending invoices */}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
           </div>
         </main>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-blue-800 text-white px-6 py-3">
+        <div className="flex justify-between items-center">
+          <div className="text-sm">
+            Copyright © 2013-2025 Zeigets. All rights reserved. v2.170322
+          </div>
+          <div className="text-sm">
+            Version 2.2
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
 
-export default SupplierCustomerCreate; 
+export default PendingInvoice; 

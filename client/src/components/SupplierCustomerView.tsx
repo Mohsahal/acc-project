@@ -37,7 +37,8 @@ const SupplierCustomerView = () => {
   const [createProfileOpen, setCreateProfileOpen] = useState(false);
   const [clientDetailsOpen, setClientDetailsOpen] = useState(false);
   const [clientStaffOpen, setClientStaffOpen] = useState(false);
-  const [supplierCustomerOpen, setSupplierCustomerOpen] = useState(true);
+  const [supplierCustomerOpen, setSupplierCustomerOpen] = useState(false);
+  const [invoiceOpen, setInvoiceOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleLogout = () => {
@@ -95,7 +96,22 @@ const SupplierCustomerView = () => {
         { label: "View", path: "/supplier-customer/view" },
       ]
     },
-    { icon: FileText, label: "Invoice", path: "/invoice" },
+    { 
+      icon: FileText, 
+      label: "Invoice", 
+      path: "/invoice",
+      hasDropdown: true,
+      isOpen: invoiceOpen,
+      subItems: [
+        { label: "Create Single Invoice", path: "/invoice/create-single" },
+        { label: "Create Multiple Invoice", path: "/invoice/create-multiple" },
+        { label: "New Multiple Invoice", path: "/invoice/new-multiple" },
+        { label: "Pending Invoice", path: "/invoice/pending" },
+        { label: "View", path: "/invoice/view" },
+        { label: "Invoice Status", path: "/invoice/status" },
+        { label: "Invoice Month Wise", path: "/invoice/month-wise" },
+      ]
+    },
     { icon: CheckSquare, label: "Check Invoice", path: "/check-invoice" },
     { icon: Calendar, label: "Vat Return Date", path: "/vat-return-date" },
     { icon: BarChart3, label: "Vat Return", path: "/vat-return" },
@@ -219,6 +235,8 @@ const SupplierCustomerView = () => {
                           setClientStaffOpen(!clientStaffOpen);
                         } else if (item.label === "Supplier Customer") {
                           setSupplierCustomerOpen(!supplierCustomerOpen);
+                        } else if (item.label === "Invoice") {
+                          setInvoiceOpen(!invoiceOpen);
                         }
                       } else {
                         navigate(item.path);
@@ -237,7 +255,8 @@ const SupplierCustomerView = () => {
                         (item.label === "Create Profile" && createProfileOpen) || 
                         (item.label === "Client Details" && clientDetailsOpen) ||
                         (item.label === "Client Staff" && clientStaffOpen) ||
-                        (item.label === "Supplier Customer" && supplierCustomerOpen)
+                        (item.label === "Supplier Customer" && supplierCustomerOpen) ||
+                        (item.label === "Invoice" && invoiceOpen)
                           ? 'rotate-90' : ''
                       }`} />
                     )}
@@ -247,7 +266,8 @@ const SupplierCustomerView = () => {
                     ((item.label === "Create Profile" && createProfileOpen) || 
                       (item.label === "Client Details" && clientDetailsOpen) ||
                       (item.label === "Client Staff" && clientStaffOpen) ||
-                      (item.label === "Supplier Customer" && supplierCustomerOpen)) && (
+                      (item.label === "Supplier Customer" && supplierCustomerOpen) ||
+                      (item.label === "Invoice" && invoiceOpen)) && (
                       <div className="ml-6 mt-1 space-y-1">
                         {item.subItems.map((subItem, subIndex) => (
                           <button

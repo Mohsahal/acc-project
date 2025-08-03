@@ -18,7 +18,14 @@ import StaffDetails from "./pages/StaffDetails";
 import StaffSalary from "./pages/StaffSalary";
 import StaffDocument from "./pages/StaffDocument";
 import SupplierCustomerCreate from "./components/SupplierCustomerCreate"; 
-import SupplierCustomerView from "./components/SupplierCustomerView";
+import SupplierCustomerView from "./pages/SupplierCustomerView";
+import CreateSingleInvoice from "./pages/CreateSingleInvoice";
+import CreateMultipleInvoice from "./pages/CreateMultipleInvoice";
+import NewMultipleInvoice from "./pages/NewMultipleInvoice";
+import PendingInvoice from "./pages/PendingInvoice";
+import ViewInvoice from "./pages/ViewInvoice";
+import InvoiceStatus from "./pages/InvoiceStatus";
+import InvoiceMonthWise from "./pages/InvoiceMonthWise";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -125,6 +132,63 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <SupplierCustomerView />
+              </ProtectedRoute>
+            } 
+          />
+          {/* Invoice Routes */}
+          <Route 
+            path="/invoice/create-single" 
+            element={
+              <ProtectedRoute>
+                <CreateSingleInvoice />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/invoice/create-multiple" 
+            element={
+              <ProtectedRoute>
+                <CreateMultipleInvoice />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/invoice/new-multiple" 
+            element={
+              <ProtectedRoute>
+                <NewMultipleInvoice />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/invoice/pending" 
+            element={
+              <ProtectedRoute>
+                <PendingInvoice />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/invoice/view" 
+            element={
+              <ProtectedRoute>
+                <ViewInvoice />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/invoice/status" 
+            element={
+              <ProtectedRoute>
+                <InvoiceStatus />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/invoice/month-wise" 
+            element={
+              <ProtectedRoute>
+                <InvoiceMonthWise />
               </ProtectedRoute>
             } 
           />

@@ -28,7 +28,11 @@ const ZigmaStaffProfile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [createProfileOpen, setCreateProfileOpen] = useState(true);
+  const [createProfileOpen, setCreateProfileOpen] = useState(false);
+  const [clientDetailsOpen, setClientDetailsOpen] = useState(false);
+  const [clientStaffOpen, setClientStaffOpen] = useState(false);
+  const [supplierCustomerOpen, setSupplierCustomerOpen] = useState(false);
+  const [invoiceOpen, setInvoiceOpen] = useState(false);
   
   const [formData, setFormData] = useState({
     username: "",
@@ -67,7 +71,22 @@ const ZigmaStaffProfile = () => {
     { icon: UserCheck, label: "Client Details", path: "/client-details" },
     { icon: Users, label: "Client Staff", path: "/client-staff" },
     { icon: Receipt, label: "Supplier Customer", path: "/supplier-customer" },
-    { icon: FileText, label: "Invoice", path: "/invoice" },
+    { 
+      icon: FileText, 
+      label: "Invoice", 
+      path: "/invoice",
+      hasDropdown: true,
+      isOpen: invoiceOpen,
+      subItems: [
+        { label: "Create Single Invoice", path: "/invoice/create-single" },
+        { label: "Create Multiple Invoice", path: "/invoice/create-multiple" },
+        { label: "New Multiple Invoice", path: "/invoice/new-multiple" },
+        { label: "Pending Invoice", path: "/invoice/pending" },
+        { label: "View", path: "/invoice/view" },
+        { label: "Invoice Status", path: "/invoice/status" },
+        { label: "Invoice Month Wise", path: "/invoice/month-wise" },
+      ]
+    },
     { icon: CheckSquare, label: "Check Invoice", path: "/check-invoice" },
     { icon: Calendar, label: "Vat Return Date", path: "/vat-return-date" },
     { icon: BarChart3, label: "Vat Return", path: "/vat-return" },

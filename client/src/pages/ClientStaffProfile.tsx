@@ -30,7 +30,11 @@ const ClientStaffProfile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [createProfileOpen, setCreateProfileOpen] = useState(true);
+  const [createProfileOpen, setCreateProfileOpen] = useState(false);
+  const [clientDetailsOpen, setClientDetailsOpen] = useState(false);
+  const [clientStaffOpen, setClientStaffOpen] = useState(false);
+  const [supplierCustomerOpen, setSupplierCustomerOpen] = useState(false);
+  const [invoiceOpen, setInvoiceOpen] = useState(false);
   
   const [formData, setFormData] = useState({
     username: "",
@@ -74,7 +78,22 @@ const ClientStaffProfile = () => {
     { icon: UserCheck, label: "Client Details", path: "/client-details" },
     { icon: Users, label: "Client Staff", path: "/client-staff" },
     { icon: Receipt, label: "Supplier Customer", path: "/supplier-customer" },
-    { icon: FileText, label: "Invoice", path: "/invoice" },
+    { 
+      icon: FileText, 
+      label: "Invoice", 
+      path: "/invoice",
+      hasDropdown: true,
+      isOpen: invoiceOpen,
+      subItems: [
+        { label: "Create Single Invoice", path: "/invoice/create-single" },
+        { label: "Create Multiple Invoice", path: "/invoice/create-multiple" },
+        { label: "New Multiple Invoice", path: "/invoice/new-multiple" },
+        { label: "Pending Invoice", path: "/invoice/pending" },
+        { label: "View", path: "/invoice/view" },
+        { label: "Invoice Status", path: "/invoice/status" },
+        { label: "Invoice Month Wise", path: "/invoice/month-wise" },
+      ]
+    },
     { icon: CheckSquare, label: "Check Invoice", path: "/check-invoice" },
     { icon: Calendar, label: "Vat Return Date", path: "/vat-return-date" },
     { icon: BarChart3, label: "Vat Return", path: "/vat-return" },
@@ -188,7 +207,17 @@ const ClientStaffProfile = () => {
                   <button
                     onClick={() => {
                       if (item.hasDropdown) {
-                        setCreateProfileOpen(!createProfileOpen);
+                        if (item.label === "Create Profile") {
+                          setCreateProfileOpen(!createProfileOpen);
+                        } else if (item.label === "Client Details") {
+                          setClientDetailsOpen(!clientDetailsOpen);
+                        } else if (item.label === "Client Staff") {
+                          setClientStaffOpen(!clientStaffOpen);
+                        } else if (item.label === "Supplier Customer") {
+                          setSupplierCustomerOpen(!supplierCustomerOpen);
+                        } else if (item.label === "Invoice") {
+                          setInvoiceOpen(!invoiceOpen);
+                        }
                       } else {
                         navigate(item.path);
                       }
@@ -198,11 +227,23 @@ const ClientStaffProfile = () => {
                     <item.icon className="h-4 w-4" />
                     <span className="text-sm flex-1">{item.label}</span>
                     {item.hasDropdown && (
-                      <ChevronRight className={`h-4 w-4 transition-transform ${createProfileOpen ? 'rotate-90' : ''}`} />
+                      <ChevronRight className={`h-4 w-4 transition-transform duration-200 text-gray-300 ${
+                        (item.label === "Create Profile" && createProfileOpen) || 
+                        (item.label === "Client Details" && clientDetailsOpen) ||
+                        (item.label === "Client Staff" && clientStaffOpen) ||
+                        (item.label === "Supplier Customer" && supplierCustomerOpen) ||
+                        (item.label === "Invoice" && invoiceOpen)
+                          ? 'rotate-90' : ''
+                      }`} />
                     )}
                   </button>
                   
-                  {item.hasDropdown && item.subItems && createProfileOpen && (
+                  {item.hasDropdown && item.subItems && (
+                    ((item.label === "Create Profile" && createProfileOpen) || 
+                     (item.label === "Client Details" && clientDetailsOpen) ||
+                     (item.label === "Client Staff" && clientStaffOpen) ||
+                     (item.label === "Supplier Customer" && supplierCustomerOpen) ||
+                     (item.label === "Invoice" && invoiceOpen)) && (
                     <div className="ml-6 mt-1 space-y-1">
                       {item.subItems.map((subItem, subIndex) => (
                         <button
@@ -219,6 +260,7 @@ const ClientStaffProfile = () => {
                         </button>
                       ))}
                     </div>
+                    )
                   )}
                 </div>
               ))}
